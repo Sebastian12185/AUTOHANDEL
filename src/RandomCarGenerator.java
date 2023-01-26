@@ -15,12 +15,13 @@ public class RandomCarGenerator {
         Double randomValue = random.nextInt(25000) + 8000.0;
         Double randomMileage = random.nextInt(300000) + 0.0;
         Double randomSpaceSize = random.nextInt(2000) + 500.0;
+        Integer randomDamaged = random.nextInt(5);
         Integer randomTypeCar = random.nextInt(2);
         if(randomTypeCar==0){
-            return new Personal(randomValue, randomColor, randomModel,randomProducer,randomSegment,randomMileage);
+            return new Personal(randomValue, randomColor, randomModel,randomProducer,randomSegment,randomMileage, randomDamaged);
         }
         else{
-            return new Vans(randomValue, randomColor, randomModel,randomProducer,randomSegment,randomMileage, randomSpaceSize);
+            return new Vans(randomValue, randomColor, randomModel,randomProducer,randomSegment,randomMileage, randomDamaged, randomSpaceSize);
         }
     }
 }

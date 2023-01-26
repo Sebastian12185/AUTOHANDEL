@@ -6,14 +6,16 @@ abstract public class Cars {
     public String producer;
     public String segment;
     public Double mileage;
+    public Integer damaged;
 
-    public Cars(Double value, String color, String model, String producer, String segment, Double mileage) {
+    public Cars(Double value, String color, String model, String producer, String segment, Double mileage, Integer damaged) {
         this.value = value;
         this.color = color;
         this.model = model;
         this.producer = producer;
         this.segment = segment;
         this.mileage = mileage;
+        this.damaged = damaged;
     }
 
     public Double getValue() {
@@ -33,6 +35,9 @@ abstract public class Cars {
     }
     public Double getMileage() {
         return mileage;
+    }
+    public Integer getDamaged() {
+        return damaged;
     }
 
 }
