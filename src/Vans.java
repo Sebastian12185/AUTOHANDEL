@@ -1,6 +1,6 @@
 public class Vans extends Cars{
     public Double spaceSize;
-    public Vans(Double value, String color, String model, String producer,String segment,Double mileage,Integer damaged, Double spaceSize) {
+    public Vans(Double value, String color, String model, String producer,String segment,Double mileage,String damaged, Double spaceSize) {
         super(value,color,model,producer,segment,mileage,damaged);
         this.spaceSize = spaceSize;
     }

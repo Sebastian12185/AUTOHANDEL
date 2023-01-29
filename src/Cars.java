@@ -6,9 +6,9 @@ abstract public class Cars {
     public String producer;
     public String segment;
     public Double mileage;
-    public Integer damaged;
+    public String damaged;
 
-    public Cars(Double value, String color, String model, String producer, String segment, Double mileage, Integer damaged) {
+    public Cars(Double value, String color, String model, String producer, String segment, Double mileage, String damaged) {
         this.value = value;
         this.color = color;
         this.model = model;
@@ -36,7 +36,7 @@ abstract public class Cars {
     public Double getMileage() {
         return mileage;
     }
-    public Integer getDamaged() {
+    public String getDamaged() {
         return damaged;
     }
 

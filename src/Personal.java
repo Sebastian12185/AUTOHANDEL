@@ -1,5 +1,5 @@
 public class Personal extends Cars{
-    public Personal(Double value, String color, String model, String producer,String segment,Double mileage, Integer damaged) {
+    public Personal(Double value, String color, String model, String producer,String segment,Double mileage, String damaged) {
         super(value,color,model,producer,segment,mileage,damaged);
     }
     public String toString(){
