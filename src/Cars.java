@@ -1,4 +1,3 @@
-import java.util.Random;
 abstract public class Cars {
     public Double value;
     public String color;
@@ -17,27 +16,27 @@ abstract public class Cars {
         this.mileage = mileage;
         this.damaged = damaged;
     }
-
-    public Double getValue() {
-        return value;
+    public static double costCarRepair(String producer, Double value){
+        if(producer=="AUDI"){
+            return Math.round(value*1.1)-value;
+        }
+        else if(producer=="TOYOTA"){
+            return Math.round(value*1.06)-value;
+        }
+        else if(producer=="VOLKSWAGEN"){
+            return Math.round(value*1.04)-value;
+        }
+        else if(producer=="HYUNDAI"){
+            return Math.round(value*1.09)-value;
+        }
+        else if(producer=="MERCEDES"){
+            return Math.round(value*1.12)-value;
+        }
+        else if(producer=="BMW"){
+            return Math.round(value*1.5)-value;
+        }
+        else {
+            return Math.round(value*1.3)-value;
+        }
     }
-    public String getModel() {
-        return model;
-    }
-    public String getColor() {
-        return color;
-    }
-    public String getProducer() {
-        return producer;
-    }
-    public String getSegment() {
-        return segment;
-    }
-    public Double getMileage() {
-        return mileage;
-    }
-    public String getDamaged() {
-        return damaged;
-    }
-
 }

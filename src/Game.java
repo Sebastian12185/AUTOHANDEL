@@ -3,16 +3,13 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Game {
-    private Mechanic Janusz;
-    private Mechanic Marian;
-    private Mechanic Adrian;
+
     private Scanner input = new Scanner(System.in);
     private List<Cars> carsToBuy = new ArrayList<>();
+    private Double costRepair;
 
     public Game(){
-        this.Janusz = new Mechanic("Janusz",1000.0,100,0);
-        this.Marian = new Mechanic("Marian",500.0,90,0);
-        this.Adrian = new Mechanic("Adrian",250.0,80,2);
+
         createListCars();
         this.menuStart();
     }
@@ -26,6 +23,7 @@ public class Game {
         System.out.println("2.Pokaż samochody w swoim garażu.");
         System.out.println("3.Pokaż stan gtówki.");
         System.out.println("4.Pokaż historię tranzakcji.");
+        System.out.println("5.Napraw samochód jeśli jest zepsuty.");
         if (input.hasNextInt()) {
             Integer number = this.input.nextInt();
             switch (number){
@@ -34,6 +32,7 @@ public class Game {
                 case 2 -> checkGarage();
                 case 3 -> checkAmountOfCash();
                 case 4 -> transactionHistory();
+                case 5 -> choseCarToFix();
                 default -> menuStart();
             }
         }
@@ -45,7 +44,6 @@ public class Game {
     }
 
     private void listaSamochodow() {
-
         for (int i = 0; i < carsToBuy.size(); i++) {
             System.out.println(i+1+". "+carsToBuy.get(i));
         }
@@ -86,6 +84,7 @@ public class Game {
         for(int i=0;i<20;i++) {
             RandomCarGenerator car = new RandomCarGenerator();
             this.carsToBuy.add(car.generateRandomCar());
+
         }
     }
     private void checkGarage(){
@@ -109,6 +108,98 @@ public class Game {
         }
         else {
             System.out.println("Brak operacji na koncie");
+            menuStart();
+        }
+    }
+    private void choseCarToFix(){
+        if(Player.garageEmpty()==false){
+            Player.getCarsToRepair();
+            System.out.println("wpisz numer samochodu, który chcesz naprawić: ");
+            Integer number = this.input.nextInt();
+            if(Player.garage.get(number-1).damaged != "WITHOUT"){
+                repairCar(number - 1);
+            }
+            else {
+                System.out.println("Ten samochód jest sprawny.");
+                menuStart();
+            }
+        }
+        else {
+            System.out.println("Brak samochodów do naprawy.");
+            menuStart();
+        }
+    }
+    private void repairCar(Integer carNumber){
+        System.out.println("Wybierz swojego mechanika:");
+        System.out.println("1.Janusz");
+        System.out.println("Masz 100% pewność, że naprawi i nic nie zniszczy poza naprawą, koszt usługi 1000zł + dodatkowe koszty związane z marką oraz częściami do pojazdu");
+        System.out.println("2.Marian");
+        System.out.println("Masz 90% pewność, że naprawi,w przypadku braku możliwości naprawy Mariana samochód w celu naprawy będzie musiał trafić do Janusza, koszt usługi 500zł + dodatkowe koszty związane z marką oraz częściami do pojazdu");
+        System.out.println("3.Adrian");
+        System.out.println("Masz 80% pewność, że naprawi, ale jest 2% szansy na zainstnienie innych uszkodzeń, koszt usługi 700zł + dodatkowe koszty związane z marką oraz częściami do pojazdu");
+        System.out.println("4.Wyjdź do menu.");
+        if (input.hasNextInt()) {
+            Integer number = this.input.nextInt();
+            switch (number){
+                case 1 -> mechanicWork("Janusz",carNumber);
+                case 2 -> mechanicWork("Marian",carNumber);
+                case 3 -> mechanicWork("Adrian",carNumber);
+                case 4 -> menuStart();
+                default -> choseCarToFix();
+            }
+        }
+        else {
+            System.out.println("Wprowadzony symbol nie jest liczbą");
+            new Game();
+        }
+    }
+    private void mechanicWork(String mechanicFirstName,Integer carNumber){
+        if(Player.getCar(carNumber).damaged.contains("+")){
+            System.out.println("Przykro mi uszkodzenia auta są zbyt poważne samochód musi trafić do Janusza");
+            mechanicFirstName = "Janusz";
+            Player.getCar(carNumber).damaged=Player.getCar(carNumber).damaged.substring(0,Player.getCar(carNumber).damaged.length()-1);
+        }
+        Object obj = CarParts.costRepairOfParts(Player.getCar(carNumber).damaged,Player.getCar(carNumber).value);
+        if(CarParts.costRepairOfParts(Player.getCar(carNumber).damaged,Player.getCar(carNumber).value) instanceof Double){
+            String str = obj.toString();
+            double valueParts = Double.valueOf(str).doubleValue();
+            double valueRepair = Cars.costCarRepair(Player.getCar(carNumber).producer,Player.getCar(carNumber).value);
+            if(mechanicFirstName=="Janusz"){
+                costRepair=valueRepair+ valueParts+1000.0;
+            }
+            else if(mechanicFirstName=="Marian"){
+                costRepair=valueRepair+ valueParts+500.0;
+
+            }
+            else {
+                costRepair=valueRepair+ valueParts+700.0;
+            }
+            System.out.println("Cena "+Math.round(costRepair));
+            System.out.println("Naprawiamy czy odpuszczamy?");
+            System.out.println("1.Napraw.");
+            System.out.println("2.Wyjście do menu.");
+            if (input.hasNextInt()) {
+                Integer number = this.input.nextInt();
+                switch (number){
+                    case 1 -> repairDamage(carNumber,costRepair,mechanicFirstName);
+                    case 2 -> menuStart();
+                }
+            }
+            else {
+                System.out.println("Wprowadzony symbol nie jest liczbą");
+                new Game();
+            }
+        }
+        else{
+            System.out.println(obj);
+            menuStart();
+        }
+    }
+    private void repairDamage(Integer carNumber,Double costRepair,String mechanicFirstName){
+        if(Player.getMoney()>=costRepair){
+            Repairs.carRepair(Player.getCar(carNumber),mechanicFirstName);
+            Player.withdrawMoney(costRepair,this.carsToBuy.get(carNumber).model);
+            System.out.println("Samochód został naprawiony");
             menuStart();
         }
     }

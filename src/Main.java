@@ -8,3 +8,5 @@ public class Main {
         Game game = new Game();
     }
 }
+
+//WYŚWIETLANIE LISTY SAMOCHODÓW DO NAPRAWIENIA BEZ SPRAWNYCH SAM

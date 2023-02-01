@@ -34,11 +34,16 @@ public class Player {
             return garage;
         }
         else{
-            for (Cars car : garage) {
-                System.out.println(car);
+            for (int i = 0; i < garage.size(); i++) {
+                System.out.println(i+1+". "+garage.get(i));
             }
             return garage;
         }
+    }
+    public static void getCarsToRepair() {
+            for (int i = 0; i < garage.size(); i++) {
+                System.out.println(i + 1 + ". " + garage.get(i));
+            }
     }
     public static Boolean garageEmpty(){
         if (garage.isEmpty()) {
@@ -53,12 +58,15 @@ public class Player {
     public static Boolean withdrawMoney(Double cash,String model){
         LocalDateTime now = LocalDateTime.now();
         tranzations.add("Kwota: ");
-        tranzations.add(cash);
+        tranzations.add(Math.round(cash));
         tranzations.add("Model samochodu: ");
         tranzations.add(model);
         tranzations.add("Kiedy: ");
         tranzations.add(now);
         money = Player.money - cash;
         return true;
+    }
+    public static Cars getCar(Integer carNumber){
+        return garage.get(carNumber);
     }
 }
