@@ -65,23 +65,30 @@ public class Player {
         tranzations.add(model);
         tranzations.add("Kiedy: ");
         tranzations.add(now);
+        Game.courseOfTheGame();
         return true;
     }
-    public static Boolean withdrawMoney(Double cash,String model,String buyOrRepair){
+    public static Boolean withdrawMoney(Double cash,String model,String typeWithdraw){
         LocalDateTime now = LocalDateTime.now();
-        if(buyOrRepair=="Buy"){
+        if(typeWithdraw=="Buy"){
             tranzations.add("Kupno samochodu:");
         }
-        if(buyOrRepair=="Repair"){
+        if(typeWithdraw=="Repair"){
             tranzations.add("Naprawa samochodu:");
+        }
+        if(typeWithdraw=="buyAdvetisment"){
+            tranzations.add("Kupno reklamy:");
         }
         tranzations.add("Kwota: ");
         tranzations.add(Math.round(cash));
-        tranzations.add("Model samochodu: ");
-        tranzations.add(model);
+        if(model!=null){
+            tranzations.add("Model samochodu: ");
+            tranzations.add(model);
+        }
         tranzations.add("Kiedy: ");
         tranzations.add(now);
         money = Player.money - cash;
+        Game.courseOfTheGame();
         return true;
     }
     public static Cars getCar(Integer carNumber){

@@ -5,6 +5,6 @@ public class Vans extends Cars{
         this.spaceSize = spaceSize;
     }
     public String toString(){
-        return "Wartość: "+ this.value+", Kolor: "+ this.color+", Model: "+this.model+ ", Producent: "+this.producer+", Segment:" + this.segment+ ", Mileage: "+this.mileage+", Typ: "+ this.type+", Uszkodzenia: "+ this.damaged+", Pojemność ładunkowa: "+this.spaceSize;
+        return "Wartość: "+ this.value+", Kolor: "+ this.color+", Model: "+this.model+ ", Producent: "+this.producer+", Segment:" + this.segment+ ", Mileage: "+this.mileage+", Uszkodzenia: "+ this.damaged+", Pojemność ładunkowa: "+this.spaceSize;
     }
 }

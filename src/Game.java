@@ -5,15 +5,18 @@ public class Game {
     private Scanner input = new Scanner(System.in);
     private List<Cars> carsToBuy = new ArrayList<>();
     private Double costRepair;
-
+    public Integer numberOfMoves=0;
+    private static Random random = new Random();
     public Game(){
-        createListClients(3);
+        addClientsToList(3);
         createListCars();
         this.menuStart();
     }
 
 
     public void menuStart(){
+        getMoves(0);
+        System.out.println(getMoves(0));
         System.out.println("GRA AUTOHANDEL");
         System.out.println("Wybierz co chcesz zrobić:");
         System.out.println("0.Zakończ program.");
@@ -71,6 +74,7 @@ public class Game {
         Double additionalCosts = this.carsToBuy.get(number-1).value * 0.02+10;
         if(this.carsToBuy.get(number-1).value+additionalCosts<=Player.getMoney()) {
             System.out.println("Pomyślnie zakupiono samochód");
+            getMoves(1);
             Player.addToGarage(this.carsToBuy.get(number - 1));
             Player.withdrawMoney(this.carsToBuy.get(number-1).value,this.carsToBuy.get(number-1).model, "Buy");
             carsToBuy.clear();
@@ -88,7 +92,7 @@ public class Game {
             this.carsToBuy.add(car.generateRandomCar());
         }
     }
-    private void createListClients(Integer ilosc){
+    private void addClientsToList(Integer ilosc){
             for (int i=0;i<ilosc;i++){
                 RandomClientGenerator client = new RandomClientGenerator();
                     Client.clients.add(client.generateRandomClient());
@@ -130,11 +134,14 @@ public class Game {
                             double priceForSell = input.nextDouble();
                         if (Client.clients.get(clientNumber).money >= priceForSell) {
                             Player.money = Player.money + priceForSell;
+                            Player.money = Player.money - priceForSell*0.02+10;
                             Client.clients.remove(Client.clients.get(clientNumber));
                             Player.addCash(priceForSell, Player.garage.get(i).model);
                             Player.garage.remove(i);
+                            System.out.println("Pobrano wartość podatku 2% ze sprzedaży samochodu oraz samochód został umty przed wyjazdem w kwocie usługi 10zł");
                             System.out.println("Pomyślnie sprzedano samochód");
-                            createListClients(2);
+                            getMoves(1);
+                            addClientsToList(2);
                             menuStart();
                         } else {
                             System.out.println("Nie stać klienta na kupno samochodu");
@@ -228,7 +235,7 @@ public class Game {
     }
     private void mechanicWork(String mechanicFirstName,Integer carNumber){
         if(Player.getCar(carNumber).damaged.contains("+")){
-            System.out.println("Przykro mi uszkodzenia auta są zbyt poważne samochód musi trafić do Janusza");
+            System.out.println("Przykro mi uszkodzenia auta są zbyt poważne samochód musi trafić do Janusza i oto jego calkowita cena naprawy");
             mechanicFirstName = "Janusz";
             Player.getCar(carNumber).damaged=Player.getCar(carNumber).damaged.substring(0,Player.getCar(carNumber).damaged.length()-1);
         }
@@ -272,11 +279,74 @@ public class Game {
         if(Player.getMoney()>=costRepair){
             Repairs.carRepair(Player.getCar(carNumber),mechanicFirstName);
             Player.withdrawMoney(costRepair,Player.garage.get(carNumber).model, "Repair");
-            System.out.println("Samochód został naprawiony");
+            getMoves(1);
             menuStart();
         }
     }
     private void buyAdvertisement(){
+        System.out.println("1.Ogłoszenie w lokalnej gazecie. Koszt 100zł i może przyciągnąć od 1 do 10 klientów");
+        System.out.println("2.Ogłoszenie w internecie. Koszt 10zł i przyciąga jednego klienta");
+        System.out.println("3.Wyjście.");
+        if (input.hasNextInt()) {
+            Integer number = this.input.nextInt();
+            switch (number){
+                case 1 -> paperAdvertisment();
+                case 2 -> onlineAdvertisment();
+                default -> menuStart();
+            }
+        }
+        else {
+            System.out.println("Wprowadzony symbol nie jest liczbą");
+            new Game();
+        }
+    }
+    private void paperAdvertisment(){
+            int number = random.nextInt(10) + 1;
+        if(Player.money>=100){
+            Player.withdrawMoney(100.0,null,"buyAdvetisment");
+            System.out.println("Zakupiono ogłoszenie w gazecie.");
+            getMoves(1);
+            System.out.println("Gratulacje twoja liczba klientów wzrosła o: "+number);
+            addClientsToList(number);
+            menuStart();
+        }
+        else {
+            System.out.println("Niestety nie masz wystarczającej ilości gotówki.");
+            menuStart();
+        }
 
+    }
+    private void onlineAdvertisment(){
+        if(Player.money>=10){
+            Player.withdrawMoney(10.0,null,"buyAdvetisment");
+            System.out.println("Zakupiono ogłoszenie w internecie.");
+            getMoves(1);
+            addClientsToList(1);
+            menuStart();
+        }
+        else {
+            System.out.println("Niestety nie masz wystarczającej ilości gotówki.");
+            menuStart();
+        }
+    }
+    public String getMoves(Integer display){
+
+        if(display==1){
+            numberOfMoves=numberOfMoves+1;
+            return "Wykonałeś jeden ruch.";
+        }
+        else {
+            return "Łączna ilość ruchów:"+numberOfMoves;
+        }
+    }
+    public static void courseOfTheGame(){
+        if(Player.money>=100000.0){
+            System.out.println("WYGRAŁEŚ!");
+            System.exit(0);
+        }
+        if(Player.money<10){
+            System.out.println("PRZEGRAŁEŚ!");
+            System.exit(0);
+        }
     }
 }
