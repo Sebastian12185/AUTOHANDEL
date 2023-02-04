@@ -4,6 +4,7 @@ public class Game {
 
     private Scanner input = new Scanner(System.in);
     private List<Cars> carsToBuy = new ArrayList<>();
+    public List<Object> installmentPayments = new ArrayList<>();
     private Double costRepair;
     public Integer numberOfMoves=0;
     private static Random random = new Random();
@@ -15,8 +16,7 @@ public class Game {
 
 
     public void menuStart(){
-        getMoves(0);
-        System.out.println(getMoves(0));
+        System.out.println("Całkowita ilość ruchów:"+getMoves(0));
         System.out.println("GRA AUTOHANDEL");
         System.out.println("Wybierz co chcesz zrobić:");
         System.out.println("0.Zakończ program.");
@@ -64,7 +64,7 @@ public class Game {
         }
         else {
             System.out.println("Wprowadzony symbol nie jest liczbą");
-            new Game();
+            menuStart();
         }
     }
     private void buyCar(){
@@ -74,6 +74,7 @@ public class Game {
         Double additionalCosts = this.carsToBuy.get(number-1).value * 0.02+10;
         if(this.carsToBuy.get(number-1).value+additionalCosts<=Player.getMoney()) {
             System.out.println("Pomyślnie zakupiono samochód");
+            System.out.println("Wykonano ruch");
             getMoves(1);
             Player.addToGarage(this.carsToBuy.get(number - 1));
             Player.withdrawMoney(this.carsToBuy.get(number-1).value,this.carsToBuy.get(number-1).model, "Buy");
@@ -114,7 +115,7 @@ public class Game {
         }
         else {
             System.out.println("Wprowadzony symbol nie jest liczbą");
-            new Game();
+            menuStart();
         }
     }
 
@@ -124,8 +125,6 @@ public class Game {
             Integer clientNumber = this.input.nextInt() - 1;
             if (Player.garageEmpty() == false) {
                 for (int i = 0; i < Player.garage.size(); i++) {
-                    System.out.println(Player.garage.get(i).type);
-                    System.out.println(Client.clients.get(clientNumber).carType);
                     if (Player.garage.get(i).producer == Client.clients.get(clientNumber).producer1 || Player.garage.get(i).producer == Client.clients.get(clientNumber).producer2 && Player.garage.get(i).type == Client.clients.get(clientNumber).carType && Player.garage.get(i).damaged==Client.clients.get(clientNumber).damages) {
                         System.out.println("Aktualna wartość twojego samochodu: " + Math.round(Player.garage.get(i).value));
                         System.out.println("Oszczędności klienta: "+Client.clients.get(clientNumber).money);
@@ -135,17 +134,32 @@ public class Game {
                         if (Client.clients.get(clientNumber).money >= priceForSell) {
                             Player.money = Player.money + priceForSell;
                             Player.money = Player.money - priceForSell*0.02+10;
+                            priceForSell = priceForSell*0.02+10;
                             Client.clients.remove(Client.clients.get(clientNumber));
-                            Player.addCash(priceForSell, Player.garage.get(i).model);
+                            Player.addCash(priceForSell, Player.garage.get(i).model,"normal");
                             Player.garage.remove(i);
                             System.out.println("Pobrano wartość podatku 2% ze sprzedaży samochodu oraz samochód został umty przed wyjazdem w kwocie usługi 10zł");
                             System.out.println("Pomyślnie sprzedano samochód");
                             getMoves(1);
+                            System.out.println("Wykonano ruch");
                             addClientsToList(2);
                             menuStart();
                         } else {
                             System.out.println("Nie stać klienta na kupno samochodu");
-                            menuStart();
+                            System.out.println("Ale może wziąść na raty");
+                            System.out.println("1.Spłacanie ratalne.");
+                            System.out.println("2.Powrót do menu.");
+                            if (input.hasNextInt()) {
+                                Integer number = this.input.nextInt();
+                                switch (number){
+                                    case 1 -> installmentPayments(Player.garage.get(i),priceForSell,Client.clients.get(clientNumber));
+                                    default -> menuStart();
+                                }
+                            }
+                            else {
+                                System.out.println("Wprowadzony symbol nie jest liczbą");
+                                menuStart();
+                            }
                         }
                         }
                         catch (Exception e){
@@ -164,7 +178,7 @@ public class Game {
 
         } else {
             System.out.println("Wprowadzony symbol nie jest liczbą");
-            menuStart();
+            new Game();
         }
     }
     private void checkGarage(){
@@ -280,6 +294,7 @@ public class Game {
             Repairs.carRepair(Player.getCar(carNumber),mechanicFirstName);
             Player.withdrawMoney(costRepair,Player.garage.get(carNumber).model, "Repair");
             getMoves(1);
+            System.out.println("Wykonano ruch");
             menuStart();
         }
     }
@@ -306,6 +321,7 @@ public class Game {
             Player.withdrawMoney(100.0,null,"buyAdvetisment");
             System.out.println("Zakupiono ogłoszenie w gazecie.");
             getMoves(1);
+            System.out.println("Wykonano ruch");
             System.out.println("Gratulacje twoja liczba klientów wzrosła o: "+number);
             addClientsToList(number);
             menuStart();
@@ -321,6 +337,7 @@ public class Game {
             Player.withdrawMoney(10.0,null,"buyAdvetisment");
             System.out.println("Zakupiono ogłoszenie w internecie.");
             getMoves(1);
+            System.out.println("Wykonano ruch");
             addClientsToList(1);
             menuStart();
         }
@@ -329,14 +346,37 @@ public class Game {
             menuStart();
         }
     }
-    public String getMoves(Integer display){
-
-        if(display==1){
-            numberOfMoves=numberOfMoves+1;
-            return "Wykonałeś jeden ruch.";
+    public Integer getMoves(Integer display){
+        if(display==1) {
+            numberOfMoves = numberOfMoves + 1;
+            if(!installmentPayments.isEmpty()) {
+                    String model = null;
+                    Double onePayment = null;
+                    Integer moves = null;
+                    for (Object item : installmentPayments) {
+                        if (item instanceof Double) {
+                            onePayment = (Double) item;
+                        }
+                        if (item instanceof String) {
+                            model = (String) item;
+                        }
+                        if (item instanceof Integer) {
+                            moves = (Integer) item;
+                        }
+                    }
+                    if (numberOfMoves <= moves + 9) {
+                        Player.money = Player.money + onePayment;
+                        Player.addCash(onePayment, model, "installment");
+                        moves--;
+                    }
+                    else {
+                        installmentPayments.clear();
+                    }
+            }
+            return numberOfMoves;
         }
-        else {
-            return "Łączna ilość ruchów:"+numberOfMoves;
+        else  {
+            return numberOfMoves;
         }
     }
     public static void courseOfTheGame(){
@@ -347,6 +387,25 @@ public class Game {
         if(Player.money<10){
             System.out.println("PRZEGRAŁEŚ!");
             System.exit(0);
+        }
+    }
+    public void installmentPayments(Cars car,double priceForSell,Client client){
+        if(!installmentPayments.isEmpty()){
+            System.out.println("Niestety możesz sprzedać tylko jeden samochód na raty.");
+            menuStart();
+        }
+        else {
+            Integer a = getMoves(0);
+            Double onePayment = priceForSell / 10;
+            Player.garage.remove(car);
+            Client.clients.remove(client);
+            installmentPayments.add(onePayment);
+            installmentPayments.add(car.model);
+            installmentPayments.add(a);
+            System.out.println("Pomyślnie sprzedano samochód");
+            Player.money = Player.money + onePayment;
+            Player.addCash(onePayment, car.model, "installment");
+            menuStart();
         }
     }
 }

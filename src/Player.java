@@ -56,10 +56,15 @@ public class Player {
         garage.add(samochód);
     }
 
-    public static Boolean addCash(Double cash, String model){
+    public static Boolean addCash(Double cash, String model, String installment){
         LocalDateTime now = LocalDateTime.now();
         tranzations.add("Sprzedaż samochodu:");
-        tranzations.add("Kwota: ");
+        if(installment=="normal"){
+            tranzations.add("Pełna kwota: ");
+        }
+        if(installment=="installment"){
+            tranzations.add("Rata: ");
+        }
         tranzations.add(Math.round(cash));
         tranzations.add("Model samochodu: ");
         tranzations.add(model);
