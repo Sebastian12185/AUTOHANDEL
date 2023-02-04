@@ -5,20 +5,20 @@ public class Repairs {
     public static void carRepair(Cars car, String mechanicFirstName){
         Integer randomNumber = random.nextInt(100)+1;
         if(mechanicFirstName=="Janusz"){
+            CarParts.getCostCarAfterRepairByPart(car);
             car.damaged="WITHOUT";
-            car.value=CarParts.getCostCarAfterRepairByPart(car);
         }
-        else if(mechanicFirstName=="Marian"){
+        if(mechanicFirstName=="Marian"){
             if(randomNumber<=10){
                 System.out.println("Nie udało się naprawić samochód musi trafić do Janusza.");
                 car.damaged = car.damaged + "+";
             }
             else {
+                CarParts.getCostCarAfterRepairByPart(car);
                 car.damaged="WITHOUT";
-                car.value=CarParts.getCostCarAfterRepairByPart(car);
             }
         }
-        else{
+        if(mechanicFirstName=="Adrian"){
             if(randomNumber<=20){
                 System.out.println("Nie udało się naprawić samochodu.");
                 if(randomNumber==1 || randomNumber==2){
@@ -27,8 +27,8 @@ public class Repairs {
                 }
             }
             else {
+                CarParts.getCostCarAfterRepairByPart(car);
                 car.damaged="WITHOUT";
-                car.value=CarParts.getCostCarAfterRepairByPart(car);
             }
         }
     }

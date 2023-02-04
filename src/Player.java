@@ -55,8 +55,26 @@ public class Player {
     public static void addToGarage(Cars samochód){
         garage.add(samochód);
     }
-    public static Boolean withdrawMoney(Double cash,String model){
+
+    public static Boolean addCash(Double cash, String model){
         LocalDateTime now = LocalDateTime.now();
+        tranzations.add("Sprzedaż samochodu:");
+        tranzations.add("Kwota: ");
+        tranzations.add(Math.round(cash));
+        tranzations.add("Model samochodu: ");
+        tranzations.add(model);
+        tranzations.add("Kiedy: ");
+        tranzations.add(now);
+        return true;
+    }
+    public static Boolean withdrawMoney(Double cash,String model,String buyOrRepair){
+        LocalDateTime now = LocalDateTime.now();
+        if(buyOrRepair=="Buy"){
+            tranzations.add("Kupno samochodu:");
+        }
+        if(buyOrRepair=="Repair"){
+            tranzations.add("Naprawa samochodu:");
+        }
         tranzations.add("Kwota: ");
         tranzations.add(Math.round(cash));
         tranzations.add("Model samochodu: ");

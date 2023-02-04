@@ -6,8 +6,9 @@ abstract public class Cars {
     public String segment;
     public Double mileage;
     public String damaged;
+    public String type;
 
-    public Cars(Double value, String color, String model, String producer, String segment, Double mileage, String damaged) {
+    public Cars(Double value, String color, String model, String producer, String segment, Double mileage, String damaged, String type) {
         this.value = value;
         this.color = color;
         this.model = model;
@@ -15,6 +16,7 @@ abstract public class Cars {
         this.segment = segment;
         this.mileage = mileage;
         this.damaged = damaged;
+        this.type = type;
     }
     public static double costCarRepair(String producer, Double value){
         if(producer=="AUDI"){

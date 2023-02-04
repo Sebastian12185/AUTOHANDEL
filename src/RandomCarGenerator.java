@@ -19,10 +19,10 @@ public class RandomCarGenerator {
         String randomDamaged = damages[random.nextInt(damages.length)];
         Integer randomTypeCar = random.nextInt(2);
         if(randomTypeCar==0){
-                return new Personal(randomValue, randomColor, randomModel, randomProducer, randomSegment, randomMileage, randomDamaged);
+                return new Personal(randomValue, randomColor, randomModel, randomProducer, randomSegment, randomMileage, randomDamaged,"personal");
         }
         else{
-            return new Vans(randomValue, randomColor, randomModel,randomProducer,randomSegment,randomMileage, randomDamaged, randomSpaceSize);
+            return new Vans(randomValue, randomColor, randomModel,randomProducer,randomSegment,randomMileage, randomDamaged,"van", randomSpaceSize);
         }
     }
 }

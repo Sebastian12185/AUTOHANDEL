@@ -1,6 +1,4 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Game {
 
@@ -9,7 +7,7 @@ public class Game {
     private Double costRepair;
 
     public Game(){
-
+        createListClients(3);
         createListCars();
         this.menuStart();
     }
@@ -24,6 +22,8 @@ public class Game {
         System.out.println("3.Pokaż stan gtówki.");
         System.out.println("4.Pokaż historię tranzakcji.");
         System.out.println("5.Napraw samochód jeśli jest zepsuty.");
+        System.out.println("6.Pokaż listę klientów.");
+        System.out.println("7.Kup reklamę.");
         if (input.hasNextInt()) {
             Integer number = this.input.nextInt();
             switch (number){
@@ -33,6 +33,8 @@ public class Game {
                 case 3 -> checkAmountOfCash();
                 case 4 -> transactionHistory();
                 case 5 -> choseCarToFix();
+                case 6 -> listOfClients();
+                case 7 -> buyAdvertisement();
                 default -> menuStart();
             }
         }
@@ -70,7 +72,7 @@ public class Game {
         if(this.carsToBuy.get(number-1).value+additionalCosts<=Player.getMoney()) {
             System.out.println("Pomyślnie zakupiono samochód");
             Player.addToGarage(this.carsToBuy.get(number - 1));
-            Player.withdrawMoney(this.carsToBuy.get(number-1).value,this.carsToBuy.get(number-1).model);
+            Player.withdrawMoney(this.carsToBuy.get(number-1).value,this.carsToBuy.get(number-1).model, "Buy");
             carsToBuy.clear();
             createListCars();
             menuStart();
@@ -84,7 +86,78 @@ public class Game {
         for(int i=0;i<20;i++) {
             RandomCarGenerator car = new RandomCarGenerator();
             this.carsToBuy.add(car.generateRandomCar());
+        }
+    }
+    private void createListClients(Integer ilosc){
+            for (int i=0;i<ilosc;i++){
+                RandomClientGenerator client = new RandomClientGenerator();
+                    Client.clients.add(client.generateRandomClient());
+        }
+    }
 
+    private void listOfClients() {
+        for (int i = 0; i < Client.clients.size(); i++) {
+            System.out.println(i+1+". "+Client.clients.get(i));
+        }
+        System.out.println("1.Wybierz klienta.");
+        System.out.println("2.Wyjdź.");
+        if (input.hasNextInt()) {
+            Integer number = this.input.nextInt();
+            switch (number){
+                case 1 -> selectClient();
+                default -> menuStart();
+            }
+        }
+        else {
+            System.out.println("Wprowadzony symbol nie jest liczbą");
+            new Game();
+        }
+    }
+
+    private void selectClient() {
+        System.out.println("1.Podaj numer kleinta.");
+        if (input.hasNextInt()) {
+            Integer clientNumber = this.input.nextInt() - 1;
+            if (Player.garageEmpty() == false) {
+                for (int i = 0; i < Player.garage.size(); i++) {
+                    System.out.println(Player.garage.get(i).type);
+                    System.out.println(Client.clients.get(clientNumber).carType);
+                    if (Player.garage.get(i).producer == Client.clients.get(clientNumber).producer1 || Player.garage.get(i).producer == Client.clients.get(clientNumber).producer2 && Player.garage.get(i).type == Client.clients.get(clientNumber).carType && Player.garage.get(i).damaged==Client.clients.get(clientNumber).damages) {
+                        System.out.println("Aktualna wartość twojego samochodu: " + Math.round(Player.garage.get(i).value));
+                        System.out.println("Oszczędności klienta: "+Client.clients.get(clientNumber).money);
+                        System.out.println("Podaj cenę samochodu za ile chcesz sprzedać: ");
+                        try {
+                            double priceForSell = input.nextDouble();
+                        if (Client.clients.get(clientNumber).money >= priceForSell) {
+                            Player.money = Player.money + priceForSell;
+                            Client.clients.remove(Client.clients.get(clientNumber));
+                            Player.addCash(priceForSell, Player.garage.get(i).model);
+                            Player.garage.remove(i);
+                            System.out.println("Pomyślnie sprzedano samochód");
+                            createListClients(2);
+                            menuStart();
+                        } else {
+                            System.out.println("Nie stać klienta na kupno samochodu");
+                            menuStart();
+                        }
+                        }
+                        catch (Exception e){
+                            System.out.println("Wprowadzony symbol nie jest liczbą");
+                            selectClient();
+                        }
+                    } else {
+                        System.out.println("Nie posiadasz samochodu które wymaga klient");
+                        menuStart();
+                    }
+                }
+            } else {
+                System.out.println("Brak samochodów na sprzedaż.");
+                menuStart();
+            }
+
+        } else {
+            System.out.println("Wprowadzony symbol nie jest liczbą");
+            menuStart();
         }
     }
     private void checkGarage(){
@@ -167,11 +240,11 @@ public class Game {
             if(mechanicFirstName=="Janusz"){
                 costRepair=valueRepair+ valueParts+1000.0;
             }
-            else if(mechanicFirstName=="Marian"){
+            if(mechanicFirstName=="Marian"){
                 costRepair=valueRepair+ valueParts+500.0;
 
             }
-            else {
+            if(mechanicFirstName=="Adrian") {
                 costRepair=valueRepair+ valueParts+700.0;
             }
             System.out.println("Cena "+Math.round(costRepair));
@@ -198,9 +271,12 @@ public class Game {
     private void repairDamage(Integer carNumber,Double costRepair,String mechanicFirstName){
         if(Player.getMoney()>=costRepair){
             Repairs.carRepair(Player.getCar(carNumber),mechanicFirstName);
-            Player.withdrawMoney(costRepair,this.carsToBuy.get(carNumber).model);
+            Player.withdrawMoney(costRepair,Player.garage.get(carNumber).model, "Repair");
             System.out.println("Samochód został naprawiony");
             menuStart();
         }
+    }
+    private void buyAdvertisement(){
+
     }
 }

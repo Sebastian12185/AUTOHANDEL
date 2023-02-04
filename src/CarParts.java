@@ -5,7 +5,6 @@ abstract public class CarParts {
     private static final Double DEFAULT_BODY_PRICE = 1.5;
     private static final Double DEFAULT_GEARBOX_PRICE = 1.5;
     private Double percentOfValueRepair;
-    private String partToRepair;
 
 
     public CarParts(String carPartType){
@@ -28,14 +27,21 @@ abstract public class CarParts {
         }
     }
 
-    public static double getCostCarAfterRepairByPart(Cars car){
-        switch (car.damaged){
-            case "BRAKES" -> {return Math.round(car.value*DEFAULT_BRAKES_PRICE);}
-            case "SUSPENSION" -> {return Math.round(car.value*DEFAULT_SUSPENSION_PRICE);}
-            case "ENGINE" -> {return Math.round(car.value*DEFAULT_ENGINE_PRICE);}
-            case "BODY" -> {return Math.round(car.value*DEFAULT_BODY_PRICE);}
-            case "GEARBOX" -> {return Math.round(car.value*DEFAULT_GEARBOX_PRICE);}
+    public static void getCostCarAfterRepairByPart(Cars car){
+        if(car.damaged=="BRAKES"){
+            Math.round(car.value = car.value*DEFAULT_BRAKES_PRICE);
         }
-        return 0;
+        if(car.damaged=="SUSPENSION"){
+            Math.round(car.value = car.value*DEFAULT_SUSPENSION_PRICE);
+        }
+        if(car.damaged=="ENGINE"){
+            Math.round(car.value = car.value*DEFAULT_ENGINE_PRICE);
+        }
+        if(car.damaged=="BODY"){
+            Math.round(car.value = car.value*DEFAULT_BODY_PRICE);
+        }
+        if(car.damaged=="GEARBOX") {
+            Math.round(car.value = car.value * DEFAULT_GEARBOX_PRICE);
+        }
     }
 }
