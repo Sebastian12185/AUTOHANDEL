@@ -21,14 +21,14 @@ public class Repairs {
             }
         }
         if(mechanicFirstName=="Adrian"){
-            if(randomNumber<=100){
+            if(randomNumber<=20){
                 System.out.println("Nie udało się naprawić samochodu.");
-                if(randomNumber<=100){
+                if(randomNumber<=2){
                     car.damaged = car.damaged + ",BODY";
                     System.out.println("Przy próbie naprawy uszkodzono również karoserie.");
                 }
             }
-            if(randomNumber==20) {
+            if(randomNumber>20) {
                 CarParts.getCostCarAfterRepairByPart(car);
                 System.out.println("Samochód został maprawiony.");
                 car.damaged="WITHOUT";
